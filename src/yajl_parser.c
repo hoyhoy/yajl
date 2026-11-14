@@ -90,9 +90,12 @@ yajl_render_error_string(yajl_handle hand, const unsigned char * jsonText,
             memneeded += strlen(": ");
             memneeded += strlen(errorText);
         }
-        str = (unsigned char *) YA_MALLOC(&(hand->alloc), memneeded + 2);
+        const size_t buffer_size_needed = memneeded + 2ULL;
+        str = (unsigned char *) YA_MALLOC(&(hand->alloc), buffer_size_needed);
         if (!str) return NULL;
-        str[0] = 0;
+
+        memset((void*) str, 0ULL, buffer_size_needed)
+
         strcat((char *) str, errorType);
         strcat((char *) str, " error");
         if (errorText != NULL) {
