@@ -54,6 +54,27 @@ if (ENABLE_CFISAN)
   target_link_options(yajl_obj PRIVATE ${cfisan_common_flags})
 endif ()
 
+if (ENABLE_MSAN)
+  # Flags needed at both compile and link time
+  set(asan_common_flags -fsanitize=memory)
+
+  # Compile-only flags
+  list(APPEND msan_compile_flags
+    -fsanitize-recover=memory
+    -fsanitize-memory-track-origins=2
+    -fsanitize-memory-use-after-dtor
+    -fno-optimize-sibling-calls
+    -fno-omit-frame-pointer
+    -fno-optimize-sibling-calls
+    -fasynchronous-unwind-tables
+    -funwind-tables
+    -fno-common
+  )
+
+  target_compile_options(yajl_obj PUBLIC ${msan_compile_flags} ${msan_common_flags})
+  target_link_options(yajl_obj PUBLIC ${msan_common_flags})
+endif ()
+
 if (ENABLE_ASAN)
   # Flags needed at both compile and link time
   set(asan_common_flags -fsanitize=address,undefined)

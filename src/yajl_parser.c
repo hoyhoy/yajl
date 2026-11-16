@@ -90,7 +90,7 @@ yajl_render_error_string(yajl_handle hand, const unsigned char * jsonText,
         str = (unsigned char *) YA_MALLOC(&(hand->alloc), buffer_size_needed);
         if (!str) return NULL;
 
-        memset((void*) str, 0ULL, buffer_size_needed)
+        memset((void*) str, 0ULL, buffer_size_needed);
 
         strcat((char *) str, errorType);
         strcat((char *) str, " error");

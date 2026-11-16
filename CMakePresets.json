@@ -3,42 +3,78 @@
   "cmakeMinimumRequired": { "major": 3, "minor": 31, "patch": 0 },
   "configurePresets": [
     {
-      "name": "cfisan",
+      "name": "cfisan-base",
       "binaryDir": "${sourceDir}/build.cfisan",
       "installDir": "${sourceDir}/build.cfisan",
-      "cacheVariables": {
-        "ENABLE_CFISAN": "ON",
-        "CMAKE_BUILD_TYPE": "Release"
+      "cacheVariables": { "ENABLE_CFISAN": "ON" },
+      "environment": {
+        "AFL_USE_CFISAN": "ON"
       }
     },
+    { "name": "cfisan-release", "inherits": "cfisan-base",
+      "cacheVariables": { "CMAKE_BUILD_TYPE": "Release" }
+    },
+    { "name": "cfisan-debug", "inherits": "cfisan-base",
+      "cacheVariables": { "CMAKE_BUILD_TYPE": "Debug" }
+    },
     {
-      "name": "asan",
+      "name": "asan-base",
       "binaryDir": "${sourceDir}/build.asan",
       "installDir": "${sourceDir}/build.asan",
       "cacheVariables": {
         "ENABLE_ASAN": "1",
-        "CMAKE_BUILD_TYPE": "Release",
-        "CMAKE_C_COMPILER": "/opt/bin/afl-clang-fast"
+        "CMAKE_C_COMPILER": "afl-clang-fast"
+      },
+      "environment": {
+        "AFL_USE_ASAN": "ON",
+        "AFL_USE_UBSAN": "ON"
       }
+    },
+    { "name": "asan-release", "inherits": "asan-base",
+      "cacheVariables": { "CMAKE_BUILD_TYPE": "Release" }
+    },
+    { "name": "asan-debug", "inherits": "asan-base",
+      "cacheVariables": { "CMAKE_BUILD_TYPE": "Debug" }
     }
   ],
   "buildPresets": [
-    { "name": "cfisan", "configurePreset": "cfisan" },
-    { "name": "asan", "configurePreset": "asan" }
+    { 
+      "name": "base", 
+      "hidden": true,
+      "environment": { "AFL_LLVM_DICT2FILE": "${sourceDir}/build/${presetName}/llvm.dict" }
+    },
+    { "name": "cfisan-release", "configurePreset": "cfisan-release", "inherits": "base" },
+    { "name": "cfisan-debug", "configurePreset": "cfisan-debug", "inherits": "base" },
+    { "name": "asan-release", "configurePreset": "asan-release", "inherits": "base" },
+    { "name": "asan-debug", "configurePreset": "asan-debug", "inherits": "base" }
   ],
   "workflowPresets": [
     {
-      "name": "cfisan",
+      "name": "cfisan-release",
       "steps": [
-        { "type": "configure", "name": "cfisan" },
-        { "type": "build", "name": "cfisan" }
+        { "type": "configure", "name": "cfisan-release" },
+        { "type": "build", "name": "cfisan-release" }
       ]
     },
     {
-      "name": "asan",
+      "name": "cfisan-debug",
       "steps": [
-        { "type": "configure", "name": "asan" },
-        { "type": "build", "name": "asan" }
+        { "type": "configure", "name": "cfisan-debug" },
+        { "type": "build", "name": "cfisan-debug" }
+      ]
+    },
+    {
+      "name": "asan-release",
+      "steps": [
+        { "type": "configure", "name": "asan-release" },
+        { "type": "build", "name": "asan-release" }
+      ]
+    },
+    {
+      "name": "asan-debug",
+      "steps": [
+        { "type": "configure", "name": "asan-debug" },
+        { "type": "build", "name": "asan-debug" }
       ]
     }
   ]
