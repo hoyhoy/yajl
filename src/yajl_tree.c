@@ -60,7 +60,7 @@ static yajl_val value_alloc (yajl_type type)
 {
     yajl_val v;
 
-    v = malloc (sizeof (*v));
+    v = calloc (1, sizeof (*v));
     if (v == NULL) return (NULL);
     memset (v, 0, sizeof (*v));
     v->type = type;
@@ -298,14 +298,13 @@ static int handle_number (void *ctx, const char *string, size_t string_length)
     if (v == NULL)
         RETURN_ERROR((context_t *) ctx, STATUS_ABORT, "Out of memory");
 
-    v->u.number.r = malloc(string_length + 1);
+    v->u.number.r = calloc(1, string_length + 1);
     if (v->u.number.r == NULL)
     {
         free(v);
         RETURN_ERROR((context_t *) ctx, STATUS_ABORT, "Out of memory");
     }
     memcpy(v->u.number.r, string, string_length);
-    v->u.number.r[string_length] = 0;
 
     v->u.number.flags = 0;
 
