@@ -52,7 +52,7 @@ yajl_parse_integer(const unsigned char *number, unsigned int length)
                             // the parser catches invalid integers
                             // before parse_integer is called...
 
-    (void) endptr;          // needed for /ANALYZE and -fanalyzer in release mode.
+    (void*) endptr; // needed for /ANALYZE and -fanalyzer in release mode.
 
     return ret;
 }
