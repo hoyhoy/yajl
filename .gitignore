@@ -3,4 +3,5 @@ Makefile
 /build/
 /build.asan/
 /build.cfisan/
-
+llvm.dict
+.bob
