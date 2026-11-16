@@ -12,14 +12,10 @@
 # ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-SET (TESTS gen-extra-close.c
-)
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR}/../../${YAJL_DIST_NAME}/include)
-LINK_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR}/../../${YAJL_DIST_NAME}/lib)
+set(TESTS gen-extra-close.c)
 
-# for each test, we'll create a target, and make the api-tests target depend on it
-FOREACH (test ${TESTS})
-  GET_FILENAME_COMPONENT(testProg ${test} NAME_WE)
-  ADD_EXECUTABLE(${testProg} ${test})
-  TARGET_LINK_LIBRARIES(${testProg} yajl)
-ENDFOREACH()
+foreach (test ${TESTS})
+  get_filename_component(testProg ${test} NAME_WE)
+  add_executable(${testProg} ${test})
+  target_link_libraries(${testProg} PRIVATE yajl_s)
+endforeach()

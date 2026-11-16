@@ -12,26 +12,9 @@
 # ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-# set up some paths
-SET (binDir ${CMAKE_CURRENT_BINARY_DIR}/../${YAJL_DIST_NAME}/bin)
+add_executable(json_verify json_verify.c)
 
-# create some directories
-FILE(MAKE_DIRECTORY ${binDir})
+target_link_libraries(json_verify yajl_s)
 
-SET (SRCS json_verify.c)
+install(TARGETS json_verify RUNTIME DESTINATION bin)
 
-# use the library we build, duh.
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR}/../${YAJL_DIST_NAME}/include)
-LINK_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR}/../${YAJL_DIST_NAME}/lib)
-
-ADD_EXECUTABLE(json_verify ${SRCS})
-
-TARGET_LINK_LIBRARIES(json_verify yajl_s)
-
-# copy in the binary
-GET_TARGET_PROPERTY(binPath json_verify LOCATION)
-
-ADD_CUSTOM_COMMAND(TARGET json_verify POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${binPath} ${binDir})
-
-INSTALL(TARGETS json_verify RUNTIME DESTINATION bin)

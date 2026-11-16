@@ -12,12 +12,5 @@
 # ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-SET (SRCS parse_config.c)
-
-# use the library we build, duh.
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR}/../${YAJL_DIST_NAME}/include)
-LINK_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR}/../${YAJL_DIST_NAME}/lib)
-
-ADD_EXECUTABLE(parse_config ${SRCS})
-
-TARGET_LINK_LIBRARIES(parse_config yajl_s)
+ADD_EXECUTABLE(parse_config parse_config.c)
+target_link_libraries(parse_config yajl_s)

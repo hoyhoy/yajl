@@ -1,0 +1,45 @@
+{
+  "version": 6,
+  "cmakeMinimumRequired": { "major": 3, "minor": 31, "patch": 0 },
+  "configurePresets": [
+    {
+      "name": "cfisan",
+      "binaryDir": "${sourceDir}/build.cfisan",
+      "installDir": "${sourceDir}/build.cfisan",
+      "cacheVariables": {
+        "ENABLE_CFISAN": "ON",
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
+      "name": "asan",
+      "binaryDir": "${sourceDir}/build.asan",
+      "installDir": "${sourceDir}/build.asan",
+      "cacheVariables": {
+        "ENABLE_ASAN": "1",
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_C_COMPILER": "/opt/bin/afl-clang-fast"
+      }
+    }
+  ],
+  "buildPresets": [
+    { "name": "cfisan", "configurePreset": "cfisan" },
+    { "name": "asan", "configurePreset": "asan" }
+  ],
+  "workflowPresets": [
+    {
+      "name": "cfisan",
+      "steps": [
+        { "type": "configure", "name": "cfisan" },
+        { "type": "build", "name": "cfisan" }
+      ]
+    },
+    {
+      "name": "asan",
+      "steps": [
+        { "type": "configure", "name": "asan" },
+        { "type": "build", "name": "asan" }
+      ]
+    }
+  ]
+}

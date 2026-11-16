@@ -12,12 +12,6 @@
 # ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-SET (SRCS yajl_test.c)
+add_executable(yajl_test yajl_test.c)
 
-# use the library we build, duh.
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR}/../../${YAJL_DIST_NAME}/include)
-LINK_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR}/../../${YAJL_DIST_NAME}/lib)
-
-ADD_EXECUTABLE(yajl_test ${SRCS})
-
-TARGET_LINK_LIBRARIES(yajl_test yajl_s)
+target_link_libraries(yajl_test yajl_s)

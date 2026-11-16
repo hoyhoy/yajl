@@ -12,12 +12,8 @@
 # ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-SET (SRCS perftest.c documents.c documents.h)
+set(SRCS perftest.c documents.c documents.h)
 
-# use the library we build, duh.
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR}/../${YAJL_DIST_NAME}/include)
-LINK_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR}/../${YAJL_DIST_NAME}/lib)
+add_executable(perftest ${SRCS})
 
-ADD_EXECUTABLE(perftest ${SRCS})
-
-TARGET_LINK_LIBRARIES(perftest yajl_s)
+target_link_libraries(perftest yajl_s)

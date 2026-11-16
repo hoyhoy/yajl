@@ -12,70 +12,88 @@
 # ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
+cmake_minimum_required(VERSION 4.0)
 
-PROJECT(YetAnotherJSONParser C)
+project(YetAnotherJSONParser C)
 
-SET (YAJL_MAJOR 2)
-SET (YAJL_MINOR 1)
-SET (YAJL_MICRO 1)
+set(CMAKE_C_STANDARD 17)
+set(CMAKE_C_STANDARD_REQUIRED ON)
+set(CMAKE_C_EXTENSIONS OFF)
 
-SET (YAJL_DIST_NAME "yajl-${YAJL_MAJOR}.${YAJL_MINOR}.${YAJL_MICRO}")
+set(YAJL_MAJOR 2)
+set(YAJL_MINOR 1)
+set(YAJL_MICRO 1)
+set(YAJL_VERSION "${YAJL_MAJOR}.${YAJL_MINOR}.${YAJL_MICRO}" CACHE INTERNAL "Yajl Full Version")
 
-IF (NOT CMAKE_BUILD_TYPE)
-  SET(CMAKE_BUILD_TYPE "Release")
-ENDIF (NOT CMAKE_BUILD_TYPE)
+set(ENABLE_ASAN OFF CACHE INTERNAL "Build with ASan+UBSan+LSan")
+set(ENABLE_CFISAN OFF CACHE INTERNAL "Build with CFISan")
+set(YAJL_BUILD_SHARED ON CACHE INTERNAL "Build the shared yajl library")
 
-SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
+if (ENABLE_ASAN)
+  set(AFL_ASAN_ENV
+    AFL_USE_ASAN=1
+    AFL_USE_UBSAN=1
+    AFL_LLVM_DICT2FILE=${CMAKE_SOURCE_DIR}/llvm.dict)
 
-IF (WIN32)
-  SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /W4")
-  ADD_DEFINITIONS(-DWIN32)
-  SET(linkFlags "/PDB:NONE /INCREMENTAL:NO /OPT:NOREF /OPT:NOICF")
-  SET(CMAKE_EXE_LINKER_FLAGS    "${linkFlags}"
+  set(AFL_LAUNCHER ${CMAKE_COMMAND} -E env ${AFL_ASAN_ENV})
+
+  # Globally (set before project()/targets are created):
+  set(CMAKE_C_COMPILER_LAUNCHER "${AFL_LAUNCHER}")
+endif ()
+
+if (NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE "Release")
+endif ()
+
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
+
+if (WIN32)
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /W4")
+  add_definitions(-DWIN32)
+  set(linkFlags "/PDB:NONE /INCREMENTAL:NO /OPT:NOREF /OPT:NOICF")
+  set(CMAKE_EXE_LINKER_FLAGS    "${linkFlags}"
       CACHE STRING "YAJL linker flags" FORCE)
-  SET(CMAKE_EXE_LINKER_FLAGS_DEBUG ""
-      CACHE STRING "YAJL debug linker flags" FORCE)
-  SET(CMAKE_EXE_LINKER_FLAGS_RELEASE
+  set(CMAKE_EXE_LINKER_FLAGS_DEBUG ""
+      CACHE STRING "YAJL debug linker flags" FORC E)
+  set(CMAKE_EXE_LINKER_FLAGS_RELEASE
       CACHE STRING "YAJL release linker flags" FORCE)
-  SET(CMAKE_SHARED_LINKER_FLAGS "${linkFlags}"
+  set(CMAKE_SHARED_LINKER_FLAGS "${linkFlags}"
       CACHE STRING "YAJL shared linker flags" FORCE)
-  SET(CMAKE_MODULE_LINKER_FLAGS "${linkFlags}"
+  set(CMAKE_MODULE_LINKER_FLAGS "${linkFlags}"
       CACHE STRING "YAJL module linker flags" FORCE)
 
-  SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /wd4996 /wd4255 /wd4130 /wd4100 /wd4711")
-  SET(CMAKE_C_FLAGS_DEBUG "/D DEBUG /Od /Z7")
-  SET(CMAKE_C_FLAGS_RELEASE "/D NDEBUG /O2")
-ELSE (WIN32)
-  SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
-  IF(CMAKE_COMPILER_IS_GNUCC)
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /wd4996 /wd4255 /wd4130 /wd4100 /wd4711")
+  set(CMAKE_C_FLAGS_DEBUG "/D DEBUG /Od /Z7")
+  set(CMAKE_C_FLAGS_RELEASE "/D NDEBUG /O2")
+else ()
+  if (CMAKE_COMPILER_IS_GNUCC)
     INCLUDE(CheckCCompilerFlag)
     CHECK_C_COMPILER_FLAG(-fvisibility=hidden HAVE_GCC_VISIBILITY)
-    IF(HAVE_GCC_VISIBILITY)
-      SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fvisibility=hidden")
-    ENDIF(HAVE_GCC_VISIBILITY)
-  ENDIF(CMAKE_COMPILER_IS_GNUCC)
-  SET(CMAKE_C_FLAGS
-      "${CMAKE_C_FLAGS} -std=c99 -pedantic -Wpointer-arith -Wno-format-y2k -Wstrict-prototypes -Wmissing-declarations -Wnested-externs -Wextra	-Wundef -Wwrite-strings -Wold-style-definition -Wredundant-decls -Wno-unused-parameter -Wno-sign-compare -Wmissing-prototypes")
+    if (HAVE_GCC_VISIBILITY)
+      set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fvisibility=hidden")
+    endif ()
+  endif ()
 
-  SET(CMAKE_C_FLAGS_DEBUG "-DDEBUG -g")
-  SET(CMAKE_C_FLAGS_RELEASE "-DNDEBUG -O2 -Wuninitialized")
-ENDIF (WIN32)
+  set(CMAKE_C_FLAGS
+      "${CMAKE_C_FLAGS} -Wpointer-arith -Wno-format-y2k -Wstrict-prototypes -Wmissing-declarations -Wnested-externs -Wextra	-Wundef -Wwrite-strings -Wold-style-definition -Wredundant-decls -Wno-unused-parameter -Wno-sign-compare -Wmissing-prototypes")
 
+  set(CMAKE_C_FLAGS_DEBUG "-DDEBUG -g -glldb -O0 -gcolumn-info -fPIC -Wall")
+  set(CMAKE_C_FLAGS_RELEASE "-DNDEBUG -O3 -g -gcolumn-info -Wuninitialized")
+endif ()
 
-ADD_SUBDIRECTORY(src)
-ADD_SUBDIRECTORY(test)
-ADD_SUBDIRECTORY(reformatter)
-ADD_SUBDIRECTORY(verify)
-ADD_SUBDIRECTORY(example)
-ADD_SUBDIRECTORY(perf)
+add_subdirectory(src)
+add_subdirectory(test)
+add_subdirectory(reformatter)
+add_subdirectory(verify)
+add_subdirectory(example)
+add_subdirectory(perf)
 
-INCLUDE(YAJLDoc.cmake)
+include(YAJLDoc.cmake)
 
 # a test target
-ADD_CUSTOM_TARGET(test
+add_custom_target(test
                   ./run_tests.sh ${CMAKE_CURRENT_BINARY_DIR}/test/parsing/yajl_test
                   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/test/parsing)
 
-ADD_CUSTOM_TARGET(test-api ${CMAKE_CURRENT_SOURCE_DIR}/test/api/run_tests.sh
+add_custom_target(test-api ${CMAKE_CURRENT_SOURCE_DIR}/test/api/run_tests.sh
                   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/test/api)
