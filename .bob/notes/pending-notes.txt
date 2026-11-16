@@ -1,3 +1,0 @@
-{"id":"81304916-2edb-4210-81b4-bab8e3eb37f1","ts":"2026-11-16T13:22:16.946Z","path":"/Users/jperrie/yajl-hoyhoy/test_heap_issue.md","version":"1.0.0","taskID":"e935aba0-e94d-4812-a002-786dcbbd3fe2"}
-{"id":"b1e06783-756f-46b5-af5b-ba5ba322bedf","ts":"2026-11-16T13:22:46.235Z","path":"/Users/jperrie/yajl-hoyhoy/test_heap_issue.md","version":"1.0.0","taskID":"e935aba0-e94d-4812-a002-786dcbbd3fe2"}
-{"id":"38418ab8-7361-4bf9-a376-6db737d6558e","ts":"2026-11-16T13:22:58.756Z","path":"/Users/jperrie/yajl-hoyhoy/test_heap_overflow.c","version":"1.0.0","taskID":"e935aba0-e94d-4812-a002-786dcbbd3fe2"}
